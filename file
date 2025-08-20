@@ -1,0 +1,386 @@
+mport React, { useState, useEffect, useRef } from 'react';
+import { Play, Upload, Download, Save, FolderOpen, Settings, Wifi, Cpu, Terminal, Code, Monitor, Zap, FileText, AlertCircle, CheckCircle, Clock, X } from 'lucide-react';
+
+const ArduinoIDE = () => {
+  const [code, setCode] = useState(`// Arduino Sketch Example
+#include <WiFi.h>
+
+const char* ssid = "your-network-name";
+const char* password = "your-password";
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+  
+  // Initialize WiFi
+  WiFi.begin(ssid, password);
+  Serial.println("Connecting to WiFi...");
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  
+  Serial.println("");
+  Serial.println("WiFi connected!");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+  
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(1000);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(1000);
+  
+  Serial.println("LED blinked");
+}`);
+  
+  const [selectedBoard, setSelectedBoard] = useState('esp32');
+  const [connectedDevice, setConnectedDevice] = useState(null);
+  const [serialOutput, setSerialOutput] = useState('');
+  const [isCompiling, setIsCompiling] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [activeTab, setActiveTab] = useState('editor');
+  const [projectName, setProjectName] = useState('Arduino_Sketch');
+  const [libraries, setLibraries] = useState([]);
+  const [compilationStatus, setCompilationStatus] = useState('idle');
+  
+  const editorRef = useRef(null);
+  const serialRef = useRef(null);
+  
+  const boards = {
+    'arduino-uno': { name: 'Arduino Uno', icon: '🔧', family: 'Arduino' },
+    'arduino-nano': { name: 'Arduino Nano', icon: '📟', family: 'Arduino' },
+    'arduino-mega': { name: 'Arduino Mega', icon: '🎛️', family: 'Arduino' },
+    'esp32': { name: 'ESP32 DevKit', icon: '📡', family: 'ESP32' },
+    'esp32-s2': { name: 'ESP32-S2', icon: '🌐', family: 'ESP32' },
+    'esp32-c3': { name: 'ESP32-C3', icon: '⚡', family: 'ESP32' },
+    'esp8266': { name: 'ESP8266', icon: '📶', family: 'ESP8266' }
+  };
+
+  const mockLibraries = [
+    { name: 'WiFi', version: '2.0.0', installed: true },
+    { name: 'ArduinoJson', version: '6.21.3', installed: true },
+    { name: 'PubSubClient', version: '2.8.0', installed: false },
+    { name: 'Adafruit NeoPixel', version: '1.11.0', installed: false },
+    { name: 'DHT sensor library', version: '1.4.4', installed: false }
+  ];
+
+  useEffect(() => {
+    setLibraries(mockLibraries);
+    
+    // Simulate device detection
+    const detectDevice = () => {
+      setTimeout(() => {
+        setConnectedDevice({
+          port: '/dev/ttyUSB0',
+          board: selectedBoard,
+          status: 'connected'
+        });
+      }, 2000);
+    };
+    
+    detectDevice();
+  }, [selectedBoard]);
+
+  const handleCompile = async () => {
+    setIsCompiling(true);
+    setCompilationStatus('compiling');
+    setSerialOutput(prev => prev + '\n=== COMPILING ===\n');
+    setSerialOutput(prev => prev + `Board: ${boards[selectedBoard].name}\n`);
+    setSerialOutput(prev => prev + 'Verifying code syntax...\n');
+    
+    // Simulate compilation process
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    if (code.includes('setup()') && code.includes('loop()')) {
+      setSerialOutput(prev => prev + 'Compilation successful!\n');
+      setSerialOutput(prev => prev + 'Sketch uses 245,760 bytes (18%) of program storage space.\n');
+      setSerialOutput(prev => prev + 'Global variables use 13,580 bytes (41%) of dynamic memory.\n');
+      setCompilationStatus('success');
+    } else {
+      setSerialOutput(prev => prev + 'ERROR: Missing setup() or loop() function\n');
+      setCompilationStatus('error');
+    }
+    
+    setIsCompiling(false);
+  };
+
+  const handleUpload = async () => {
+    if (!connectedDevice) {
+      setSerialOutput(prev => prev + '\nERROR: No device connected\n');
+      return;
+    }
+    
+    setIsUploading(true);
+    setSerialOutput(prev => prev + '\n=== UPLOADING ===\n');
+    setSerialOutput(prev => prev + `Uploading to ${boards[selectedBoard].name} on ${connectedDevice.port}\n`);
+    setSerialOutput(prev => prev + 'Connecting.........\n');
+    
+    // Simulate upload process
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    setSerialOutput(prev => prev + 'Writing at 0x00001000... (100%)\n');
+    setSerialOutput(prev => prev + 'Hash of data verified.\n');
+    setSerialOutput(prev => prev + 'Upload complete!\n\n');
+    setSerialOutput(prev => prev + '=== SERIAL MONITOR ===\n');
+    setSerialOutput(prev => prev + 'Connecting to WiFi...\n');
+    setSerialOutput(prev => prev + '....\n');
+    setSerialOutput(prev => prev + 'WiFi connected!\n');
+    setSerialOutput(prev => prev + 'IP address: 192.168.1.100\n');
+    
+    setIsUploading(false);
+    
+    // Simulate serial output
+    const serialSimulation = () => {
+      setSerialOutput(prev => prev + 'LED blinked\n');
+    };
+    
+    const interval = setInterval(serialSimulation, 2000);
+    setTimeout(() => clearInterval(interval), 10000);
+  };
+
+  const handleSave = () => {
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${projectName}.ino`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleLoad = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setCode(e.target.result);
+        setProjectName(file.name.replace('.ino', ''));
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const clearSerial = () => {
+    setSerialOutput('');
+  };
+
+  const getStatusIcon = () => {
+    switch(compilationStatus) {
+      case 'compiling': return <Clock className="w-4 h-4 text-blue-500 animate-spin" />;
+      case 'success': return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'error': return <AlertCircle className="w-4 h-4 text-red-500" />;
+      default: return <Code className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  return (
+    <div className="h-screen bg-gray-900 text-white flex flex-col">
+      {/* Header */}
+      <div className="bg-gray-800 border-b border-gray-700 p-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Zap className="w-6 h-6 text-blue-400" />
+            <h1 className="text-xl font-bold">ArduinoWeb IDE</h1>
+          </div>
+          
+          <input
+            type="text"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            className="bg-gray-700 px-3 py-1 rounded border border-gray-600 focus:border-blue-500 outline-none"
+          />
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <select
+            value={selectedBoard}
+            onChange={(e) => setSelectedBoard(e.target.value)}
+            className="bg-gray-700 px-3 py-2 rounded border border-gray-600 focus:border-blue-500 outline-none"
+          >
+            {Object.entries(boards).map(([key, board]) => (
+              <option key={key} value={key}>
+                {board.icon} {board.name}
+              </option>
+            ))}
+          </select>
+          
+          <div className="flex items-center gap-1 px-3 py-2 bg-gray-700 rounded">
+            {connectedDevice ? (
+              <>
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-sm">{connectedDevice.port}</span>
+              </>
+            ) : (
+              <>
+                <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                <span className="text-sm">No device</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Toolbar */}
+      <div className="bg-gray-800 border-b border-gray-700 p-3 flex items-center gap-2">
+        <button
+          onClick={handleCompile}
+          disabled={isCompiling}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 rounded transition-colors"
+        >
+          {getStatusIcon()}
+          {isCompiling ? 'Compiling...' : 'Verify'}
+        </button>
+        
+        <button
+          onClick={handleUpload}
+          disabled={isUploading || !connectedDevice}
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-800 rounded transition-colors"
+        >
+          <Upload className="w-4 h-4" />
+          {isUploading ? 'Uploading...' : 'Upload'}
+        </button>
+        
+        <div className="w-px h-6 bg-gray-600"></div>
+        
+        <button
+          onClick={handleSave}
+          className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded transition-colors"
+        >
+          <Save className="w-4 h-4" />
+          Save
+        </button>
+        
+        <label className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded transition-colors cursor-pointer">
+          <FolderOpen className="w-4 h-4" />
+          Open
+          <input
+            type="file"
+            accept=".ino,.cpp,.c,.h"
+            onChange={handleLoad}
+            className="hidden"
+          />
+        </label>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex">
+        {/* Sidebar */}
+        <div className="w-64 bg-gray-800 border-r border-gray-700">
+          <div className="p-4">
+            <div className="flex gap-1 mb-4">
+              <button
+                onClick={() => setActiveTab('libraries')}
+                className={`px-3 py-2 text-sm rounded ${activeTab === 'libraries' ? 'bg-blue-600' : 'bg-gray-700'}`}
+              >
+                Libraries
+              </button>
+              <button
+                onClick={() => setActiveTab('examples')}
+                className={`px-3 py-2 text-sm rounded ${activeTab === 'examples' ? 'bg-blue-600' : 'bg-gray-700'}`}
+              >
+                Examples
+              </button>
+            </div>
+            
+            {activeTab === 'libraries' && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold text-gray-300">Libraries</h3>
+                {libraries.map((lib, index) => (
+                  <div key={index} className="flex items-center justify-between p-2 bg-gray-700 rounded">
+                    <div>
+                      <div className="text-sm font-medium">{lib.name}</div>
+                      <div className="text-xs text-gray-400">v{lib.version}</div>
+                    </div>
+                    <div className={`w-2 h-2 rounded-full ${lib.installed ? 'bg-green-400' : 'bg-gray-500'}`}></div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {activeTab === 'examples' && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold text-gray-300">Examples</h3>
+                <div className="text-sm text-gray-400 space-y-1">
+                  <div className="cursor-pointer hover:text-white">Blink LED</div>
+                  <div className="cursor-pointer hover:text-white">WiFi Scanner</div>
+                  <div className="cursor-pointer hover:text-white">Web Server</div>
+                  <div className="cursor-pointer hover:text-white">MQTT Client</div>
+                  <div className="cursor-pointer hover:text-white">Sensor Reading</div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Editor and Output */}
+        <div className="flex-1 flex flex-col">
+          {/* Editor */}
+          <div className="flex-1 p-4">
+            <div className="h-full bg-gray-900 border border-gray-600 rounded overflow-hidden">
+              <div className="bg-gray-800 border-b border-gray-600 p-2 flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                <span className="text-sm">{projectName}.ino</span>
+              </div>
+              <textarea
+                ref={editorRef}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="w-full h-full bg-gray-900 text-white p-4 font-mono text-sm resize-none outline-none"
+                style={{ minHeight: '400px' }}
+                spellCheck={false}
+              />
+            </div>
+          </div>
+          
+          {/* Serial Monitor */}
+          <div className="h-64 bg-gray-800 border-t border-gray-700">
+            <div className="p-2 border-b border-gray-700 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Terminal className="w-4 h-4" />
+                <span className="text-sm font-medium">Serial Monitor</span>
+              </div>
+              <button
+                onClick={clearSerial}
+                className="text-xs text-gray-400 hover:text-white flex items-center gap-1"
+              >
+                <X className="w-3 h-3" />
+                Clear
+              </button>
+            </div>
+            <div 
+              ref={serialRef}
+              className="h-full overflow-y-auto p-4 font-mono text-sm text-green-400 whitespace-pre-wrap"
+              style={{ height: 'calc(100% - 40px)' }}
+            >
+              {serialOutput || 'Serial monitor ready. Upload code to see output...'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status Bar */}
+      <div className="bg-gray-800 border-t border-gray-700 px-4 py-2 flex items-center justify-between text-sm">
+        <div className="flex items-center gap-4">
+          <span>Board: {boards[selectedBoard].name}</span>
+          <span>Port: {connectedDevice?.port || 'Not connected'}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {compilationStatus !== 'idle' && (
+            <span className="flex items-center gap-1">
+              {getStatusIcon()}
+              {compilationStatus === 'compiling' ? 'Compiling...' : 
+               compilationStatus === 'success' ? 'Ready to upload' : 'Compilation failed'}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ArduinoIDE;
