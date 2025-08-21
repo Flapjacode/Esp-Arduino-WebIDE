@@ -1,59 +1,42 @@
-import React from "react";
-import { Book, Box } from "lucide-react";
+export default function Sidebar({ activeTab, setActiveTab, libraries, examples, onExampleSelect }) {
+  return (
+    <div className="w-48 bg-gray-800 p-2 flex flex-col border-r border-gray-700">
+      <div className="flex gap-2 mb-2">
+        <button
+          className={`flex-1 px-2 py-1 rounded ${activeTab === "libraries" ? "bg-blue-600" : "bg-gray-700"}`}
+          onClick={() => setActiveTab("libraries")}
+        >
+          Libraries
+        </button>
+        <button
+          className={`flex-1 px-2 py-1 rounded ${activeTab === "examples" ? "bg-blue-600" : "bg-gray-700"}`}
+          onClick={() => setActiveTab("examples")}
+        >
+          Examples
+        </button>
+      </div>
 
-const Sidebar = ({
-  activeTab,
-  setActiveTab,
-  libraries,
-  toggleLibrary,
-  examples,
-  loadExample,
-}) => (
-  <div className="w-64 bg-gray-850 border-r border-gray-700 flex flex-col">
-    <div className="flex">
-      <button
-        onClick={() => setActiveTab("libraries")}
-        className={`flex-1 p-2 ${activeTab === "libraries" ? "bg-gray-700" : ""}`}
-      >
-        <Box className="inline" /> Libraries
-      </button>
-      <button
-        onClick={() => setActiveTab("examples")}
-        className={`flex-1 p-2 ${activeTab === "examples" ? "bg-gray-700" : ""}`}
-      >
-        <Book className="inline" /> Examples
-      </button>
-    </div>
+      {activeTab === "libraries" && (
+        <ul className="space-y-1">
+          {libraries.map((lib, i) => (
+            <li key={i} className="p-1 hover:bg-gray-700 rounded">{lib.name}</li>
+          ))}
+        </ul>
+      )}
 
-    <div className="flex-1 overflow-auto p-2">
-      {activeTab === "libraries" &&
-        libraries.map((lib) => (
-          <div
-            key={lib.name}
-            className="flex justify-between items-center p-1 border-b border-gray-700"
-          >
-            <span>{lib.name}</span>
-            <button
-              onClick={() => toggleLibrary(lib.name)}
-              className="text-xs px-2 py-1 bg-gray-700 rounded"
+      {activeTab === "examples" && (
+        <ul className="space-y-1">
+          {examples.map((ex, i) => (
+            <li
+              key={i}
+              className="p-1 hover:bg-gray-700 rounded cursor-pointer"
+              onClick={() => onExampleSelect(ex.code)}
             >
-              {lib.installed ? "Remove" : "Install"}
-            </button>
-          </div>
-        ))}
-
-      {activeTab === "examples" &&
-        examples.map((ex) => (
-          <div
-            key={ex.name}
-            className="p-2 border-b border-gray-700 hover:bg-gray-700 cursor-pointer"
-            onClick={() => loadExample(ex)}
-          >
-            {ex.name}
-          </div>
-        ))}
+              {ex.name}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
-  </div>
-);
-
-export default Sidebar;
+  );
+}

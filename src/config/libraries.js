@@ -1,6 +1,6 @@
 export const libraries = [
-  { name: "Wire", installed: true },
-  { name: "SPI", installed: true },
-  { name: "WiFi", installed: false },
-  { name: "PubSubClient (MQTT)", installed: false },
+  { name: "WiFi.h" },
+  { name: "Wire.h" },
+  { name: "SPI.h" },
+  { name: "Servo.h" }
 ];

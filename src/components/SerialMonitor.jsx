@@ -1,25 +1,23 @@
-import React, { useEffect, useRef } from "react";
-import { Terminal } from "lucide-react";
-
-const SerialMonitor = ({ serialOutput }) => {
-  const ref = useRef();
-
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.scrollTop = ref.current.scrollHeight;
-    }
-  }, [serialOutput]);
-
+export default function SerialMonitor({ serialOutput, setSerialInput, sendSerial }) {
   return (
-    <div className="bg-black text-green-400 p-2 h-32 overflow-auto font-mono" ref={ref}>
-      <div className="flex items-center gap-2 mb-1 text-gray-400">
-        <Terminal size={14} /> Serial Monitor
+    <div className="bg-gray-800 p-2 mt-2 rounded shadow-inner">
+      <h3 className="font-bold mb-1">Serial Monitor</h3>
+      <div className="h-32 overflow-y-auto bg-black text-green-400 p-2 rounded font-mono text-sm mb-2">
+        {serialOutput.map((line, idx) => (
+          <div key={idx}>{line}</div>
+        ))}
       </div>
-      {serialOutput.map((line, i) => (
-        <div key={i}>{line}</div>
-      ))}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          placeholder="Send command"
+          className="flex-1 p-1 bg-gray-700 rounded"
+          onChange={(e) => setSerialInput(e.target.value)}
+        />
+        <button onClick={sendSerial} className="px-3 py-1 bg-blue-600 rounded hover:bg-blue-500">
+          Send
+        </button>
+      </div>
     </div>
   );
-};
-
-export default SerialMonitor;
+}

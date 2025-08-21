@@ -1,14 +1,8 @@
-import React from "react";
-
-const StatusBar = ({ deviceConnected, selectedBoard }) => (
-  <div className="bg-gray-800 text-xs text-gray-400 p-1 flex justify-between items-center border-t border-gray-700">
-    <span>
-      {deviceConnected
-        ? `✔ Device connected on /dev/ttyUSB0 (${selectedBoard.name})`
-        : "⏳ Searching for device..."}
-    </span>
-    <span>Arduino Web IDE (Simulated)</span>
-  </div>
-);
-
-export default StatusBar;
+export default function StatusBar({ selectedBoard, status }) {
+  return (
+    <div className="bg-gray-800 p-2 mt-2 text-sm flex justify-between items-center border-t border-gray-700">
+      <span className="text-gray-300">Board: <span className="font-bold">{selectedBoard}</span></span>
+      <span className="text-gray-400">Status: {status}</span>
+    </div>
+  );
+}

@@ -1,62 +1,20 @@
-import React from "react";
-import { Save, Upload, Play } from "lucide-react";
+export default function Toolbar({ onVerify, onUpload, onSave, onOpen, boards, selectedBoard, onBoardChange }) {
+  return (
+    <div className="flex items-center gap-2 bg-gray-800 p-2 shadow-md">
+      <button className="px-3 py-1 bg-green-600 rounded hover:bg-green-500" onClick={onVerify}>✓ Verify</button>
+      <button className="px-3 py-1 bg-blue-600 rounded hover:bg-blue-500" onClick={onUpload}>⬆ Upload</button>
+      <button className="px-3 py-1 bg-yellow-600 rounded hover:bg-yellow-500" onClick={onSave}>💾 Save</button>
+      <button className="px-3 py-1 bg-purple-600 rounded hover:bg-purple-500" onClick={onOpen}>📂 Open</button>
 
-const Toolbar = ({
-  projectName,
-  selectedBoard,
-  boards,
-  setSelectedBoard,
-  handleSave,
-  handleOpen,
-  handleCompile,
-  handleUpload,
-}) => (
-  <div className="flex items-center justify-between p-2 bg-gray-800 border-b border-gray-700">
-    <div className="flex items-center gap-2">
-      <span className="font-bold text-green-400">{projectName}</span>
       <select
-        className="bg-gray-700 text-gray-100 px-2 py-1 rounded"
-        value={selectedBoard.id}
-        onChange={(e) =>
-          setSelectedBoard(boards.find((b) => b.id === e.target.value))
-        }
+        value={selectedBoard}
+        onChange={(e) => onBoardChange(e.target.value)}
+        className="ml-auto bg-gray-700 p-1 rounded text-sm"
       >
-        {boards.map((b) => (
-          <option key={b.id} value={b.id}>
-            {b.name}
-          </option>
+        {boards.map((board, idx) => (
+          <option key={idx} value={board}>{board}</option>
         ))}
       </select>
     </div>
-
-    <div className="flex items-center gap-2">
-      <button
-        onClick={handleSave}
-        className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded"
-      >
-        <Save size={16} /> Save
-      </button>
-
-      <label className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded cursor-pointer">
-        <Upload size={16} /> Open
-        <input type="file" accept=".ino" className="hidden" onChange={handleOpen} />
-      </label>
-
-      <button
-        onClick={handleCompile}
-        className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded"
-      >
-        <Play size={16} /> Verify
-      </button>
-
-      <button
-        onClick={handleUpload}
-        className="flex items-center gap-1 bg-green-700 hover:bg-green-600 px-3 py-1 rounded"
-      >
-        <Upload size={16} /> Upload
-      </button>
-    </div>
-  </div>
-);
-
-export default Toolbar;
+  );
+}

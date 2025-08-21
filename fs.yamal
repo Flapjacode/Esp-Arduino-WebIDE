@@ -1,30 +1,18 @@
-arduino-web-ide/
-│
-├── public/                     # Static files
-│   ├── index.html               # Main HTML template
-│   ├── favicon.ico              # Optional icon
-│   └── assets/                  # Icons, images, logos
-│
-├── src/                         # React source code
-│   ├── components/              # Reusable UI components
-│   │   ├── ArduinoIDE.jsx        # Main IDE component
-│   │   ├── Sidebar.jsx           # Optional sidebar refactor
-│   │   ├── Toolbar.jsx           # Optional toolbar refactor
-│   │   └── SerialMonitor.jsx     # Optional serial monitor refactor
-│   │
-│   ├── examples/                # Example sketches
-│   │   ├── Blink.ino
-│   │   ├── WiFiScanner.ino
-│   │   ├── WebServer.ino
-│   │   └── MqttClient.ino
-│   │
-│   ├── styles/                  # Tailwind / custom CSS
-│   │   └── global.css
-│   │
-│   ├── App.jsx                  # Main app entry
-│   ├── index.js                 # ReactDOM entrypoint
-│   └── config.js                # Config for boards, mock libraries, etc.
-│
+arduino-ide-react/
+├── index.html
+├── vite.config.js
 ├── package.json
-├── README.md
-└── tailwind.config.js
+├── /public
+│   └── favicon.ico
+└── /src
+    ├── main.jsx
+    ├── ArduinoIDE.jsx   ← orchestrates everything
+    ├── /components
+    │   ├── Sidebar.jsx
+    │   ├── Toolbar.jsx
+    │   ├── SerialMonitor.jsx
+    │   └── StatusBar.jsx
+    └── /config
+        ├── boards.js
+        ├── libraries.js
+        └── examples.js
