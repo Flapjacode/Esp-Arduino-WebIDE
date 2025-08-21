@@ -134,11 +134,6 @@ const ArduinoIDE = () => {
           <SerialMonitor serialOutput={serialOutput} />
         </div>
       </div>
-
-      <StatusBar
-        deviceConnected={deviceConnected}
-        selectedBoard={selectedBoard}
-      />
     </div>
   );
 };
