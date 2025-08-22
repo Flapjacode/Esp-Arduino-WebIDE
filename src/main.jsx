@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css"; // ← make sure this is here
+import ArduinoIDE from "./ArduinoIDE.jsx"; // ← use your existing component
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <ArduinoIDE />
   </React.StrictMode>
 );
