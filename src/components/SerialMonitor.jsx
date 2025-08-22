@@ -1,22 +1,23 @@
-export default function SerialMonitor({ serialOutput, setSerialInput, sendSerial }) {
+import React from "react";
+import { Terminal, X } from "lucide-react";
+
+export default function SerialMonitor({ serialRef, serialOutput, clearSerial }) {
   return (
-    <div className="bg-gray-800 p-2 mt-2 rounded shadow-inner">
-      <h3 className="font-bold mb-1">Serial Monitor</h3>
-      <div className="h-32 overflow-y-auto bg-black text-green-400 p-2 rounded font-mono text-sm mb-2">
-        {serialOutput.map((line, idx) => (
-          <div key={idx}>{line}</div>
-        ))}
-      </div>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Send command"
-          className="flex-1 p-1 bg-gray-700 rounded"
-          onChange={(e) => setSerialInput(e.target.value)}
-        />
-        <button onClick={sendSerial} className="px-3 py-1 bg-blue-600 rounded hover:bg-blue-500">
-          Send
+    <div className="h-64 bg-gray-800 border-t border-gray-700">
+      <div className="p-2 border-b border-gray-700 flex justify-between items-center">
+        <div className="flex gap-2 items-center">
+          <Terminal className="w-4 h-4" />
+          <span className="text-sm font-medium">Serial Monitor</span>
+        </div>
+        <button onClick={clearSerial} className="text-xs text-gray-400 hover:text-white flex items-center gap-1">
+          <X className="w-3 h-3" /> Clear
         </button>
+      </div>
+      <div
+        ref={serialRef}
+        className="h-full overflow-y-auto p-4 font-mono text-sm text-green-400 whitespace-pre-wrap"
+      >
+        {serialOutput || "Serial monitor ready. Upload code to see output..."}
       </div>
     </div>
   );

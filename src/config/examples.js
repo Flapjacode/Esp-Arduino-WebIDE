@@ -1,7 +1,7 @@
-export const examples = [
-  {
-    name: "Blink",
-    code: `void setup() {
+// /src/config/examples.js
+
+export const DEFAULT_CODE = `
+void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
@@ -10,19 +10,20 @@ void loop() {
   delay(1000);
   digitalWrite(LED_BUILTIN, LOW);
   delay(1000);
-}`
-  },
-  {
-    name: "Web Server",
-    code: `#include <WiFi.h>
+}
+`;
 
+export const EXAMPLES = {
+  "Blink": DEFAULT_CODE,
+  "AnalogRead": `
 void setup() {
-  Serial.begin(115200);
-  Serial.println("Starting Web Server...");
+  Serial.begin(9600);
 }
 
 void loop() {
-  // Web server loop
-}`
-  }
-];
+  int sensorValue = analogRead(A0);
+  Serial.println(sensorValue);
+  delay(1000);
+}
+  `,
+};

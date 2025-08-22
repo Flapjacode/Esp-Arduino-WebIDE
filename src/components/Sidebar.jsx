@@ -1,41 +1,45 @@
-export default function Sidebar({ activeTab, setActiveTab, libraries, examples, onExampleSelect }) {
+import React from "react";
+
+export default function Sidebar({ activeTab, setActiveTab, libraries, examples, loadExample }) {
   return (
-    <div className="w-48 bg-gray-800 p-2 flex flex-col border-r border-gray-700">
-      <div className="flex gap-2 mb-2">
+    <div className="w-64 bg-gray-800 border-r border-gray-700 p-4">
+      <div className="flex gap-1 mb-4">
         <button
-          className={`flex-1 px-2 py-1 rounded ${activeTab === "libraries" ? "bg-blue-600" : "bg-gray-700"}`}
           onClick={() => setActiveTab("libraries")}
+          className={`px-3 py-2 text-sm rounded ${activeTab === "libraries" ? "bg-blue-600" : "bg-gray-700"}`}
         >
           Libraries
         </button>
         <button
-          className={`flex-1 px-2 py-1 rounded ${activeTab === "examples" ? "bg-blue-600" : "bg-gray-700"}`}
           onClick={() => setActiveTab("examples")}
+          className={`px-3 py-2 text-sm rounded ${activeTab === "examples" ? "bg-blue-600" : "bg-gray-700"}`}
         >
           Examples
         </button>
       </div>
 
       {activeTab === "libraries" && (
-        <ul className="space-y-1">
-          {libraries.map((lib, i) => (
-            <li key={i} className="p-1 hover:bg-gray-700 rounded">{lib.name}</li>
+        <div className="space-y-2">
+          {libraries.map((lib) => (
+            <div key={lib.name} className="flex justify-between p-2 bg-gray-700 rounded">
+              <div>
+                <div className="text-sm font-medium">{lib.name}</div>
+                <div className="text-xs text-gray-400">v{lib.version}</div>
+              </div>
+              <div className={`w-2 h-2 rounded-full ${lib.installed ? "bg-green-400" : "bg-gray-500"}`}></div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
       {activeTab === "examples" && (
-        <ul className="space-y-1">
-          {examples.map((ex, i) => (
-            <li
-              key={i}
-              className="p-1 hover:bg-gray-700 rounded cursor-pointer"
-              onClick={() => onExampleSelect(ex.code)}
-            >
-              {ex.name}
-            </li>
+        <div className="space-y-1">
+          {Object.keys(examples).map((name) => (
+            <div key={name} className="cursor-pointer hover:text-white text-sm" onClick={() => loadExample(name)}>
+              {name}
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
