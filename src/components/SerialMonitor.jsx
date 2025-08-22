@@ -1,24 +1,32 @@
-import React from "react";
-import { Terminal, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
 
-export default function SerialMonitor({ serialRef, serialOutput, clearSerial }) {
+export default function SerialMonitor() {
+  const [logs, setLogs] = useState([
+    "Connected to Arduino...",
+    "Waiting for data...",
+  ]);
+
+  // Example: simulate incoming serial data
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLogs((prev) => [...prev, `Data: ${Math.floor(Math.random() * 100)}`]);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="h-64 bg-gray-800 border-t border-gray-700">
-      <div className="p-2 border-b border-gray-700 flex justify-between items-center">
-        <div className="flex gap-2 items-center">
-          <Terminal className="w-4 h-4" />
-          <span className="text-sm font-medium">Serial Monitor</span>
-        </div>
-        <button onClick={clearSerial} className="text-xs text-gray-400 hover:text-white flex items-center gap-1">
-          <X className="w-3 h-3" /> Clear
-        </button>
+    <div className="flex flex-col h-full">
+      <h2 className="text-lg font-bold mb-2">Serial Monitor</h2>
+      <div className="flex-1 bg-primary p-2 rounded overflow-auto text-sm font-mono">
+        {logs.map((line, idx) => (
+          <div key={idx}>{line}</div>
+        ))}
       </div>
-      <div
-        ref={serialRef}
-        className="h-full overflow-y-auto p-4 font-mono text-sm text-green-400 whitespace-pre-wrap"
-      >
-        {serialOutput || "Serial monitor ready. Upload code to see output..."}
-      </div>
+      <input
+        type="text"
+        placeholder="Send data..."
+        className="mt-2 p-1 rounded bg-secondary text-white outline-none"
+      />
     </div>
   );
 }

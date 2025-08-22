@@ -1,29 +1,25 @@
-// /src/config/examples.js
+import React from "react";
 
-export const DEFAULT_CODE = `
-void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
-}
+export default function Sidebar({ boards, libraries }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <h2 className="text-xl font-bold">Boards</h2>
+      <ul className="space-y-1">
+        {Object.keys(boards).map((key) => (
+          <li key={key} className="p-1 hover:bg-accent rounded cursor-pointer">
+            {boards[key].name}
+          </li>
+        ))}
+      </ul>
 
-void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(1000);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(1000);
+      <h2 className="text-xl font-bold mt-4">Libraries</h2>
+      <ul className="space-y-1">
+        {libraries.map((lib, i) => (
+          <li key={i} className="p-1 hover:bg-accent rounded cursor-pointer">
+            {lib}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
-`;
-
-export const EXAMPLES = {
-  "Blink": DEFAULT_CODE,
-  "AnalogRead": `
-void setup() {
-  Serial.begin(9600);
-}
-
-void loop() {
-  int sensorValue = analogRead(A0);
-  Serial.println(sensorValue);
-  delay(1000);
-}
-  `,
-};

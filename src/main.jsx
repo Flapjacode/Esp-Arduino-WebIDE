@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import ArduinoIDE from "./ArduinoIDE";
-import "./index.css"; // <-- make sure Tailwind is imported
+import App from "./App";
+import "./index.css"; // ← make sure this is here
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ArduinoIDE />
+    <App />
   </React.StrictMode>
 );

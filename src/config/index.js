@@ -1,6 +1,11 @@
-// /src/config/index.js
-import { boards } from "./boards";
-import { mockLibraries } from "./libraries";
-import { EXAMPLES, DEFAULT_CODE } from "./examples";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import ArduinoIDE from "./ArduinoIDE";
+import "./index.css"; // Tailwind styles
 
-export { boards, mockLibraries, EXAMPLES, DEFAULT_CODE };
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <ArduinoIDE />
+  </React.StrictMode>
+);
