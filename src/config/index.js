@@ -1,11 +1,28 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import ArduinoIDE from "./ArduinoIDE";
-import "./index.css"; // Tailwind styles
+// src/config/index.js
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <ArduinoIDE />
-  </React.StrictMode>
-);
+export const boards = [
+    "Arduino Uno",
+    "Arduino Nano",
+    "ESP32 DevKit",
+    "ESP8266 NodeMCU",
+  ];
+  
+  export const mockLibraries = [
+    "Wire",
+    "SPI",
+    "Servo",
+    "Adafruit_Sensor",
+    "WiFi",
+  ];
+  
+  export const DEFAULT_CODE = `\
+  void setup() {
+    Serial.begin(9600);
+  }
+  
+  void loop() {
+    Serial.println("Hello, Arduino!");
+    delay(1000);
+  }
+  `;
+  

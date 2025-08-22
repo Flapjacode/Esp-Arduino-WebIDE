@@ -9,24 +9,31 @@ export default function ArduinoIDE() {
   const [code, setCode] = useState(DEFAULT_CODE);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-primary text-white">
-      <aside className="w-64 bg-secondary p-4 flex flex-col">
+    <div className="arduino-ide">
+      {/* Sidebar */}
+      <aside className="sidebar">
         <Sidebar boards={boards} libraries={mockLibraries} />
       </aside>
 
-      <main className="flex-1 flex flex-col">
-        <Toolbar />
-        <div className="flex-1 p-4 overflow-auto">
-          <textarea
-            className="w-full h-full bg-primary text-white font-mono p-2 rounded outline-none resize-none"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
+      {/* Main editor area */}
+      <main className="main-editor">
+        <div className="toolbar">
+          <Toolbar />
         </div>
-        <StatusBar />
+
+        <textarea
+          className="editor"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+        />
+
+        <div className="status-bar">
+          <StatusBar />
+        </div>
       </main>
 
-      <aside className="w-80 bg-secondary p-4">
+      {/* Serial monitor */}
+      <aside className="serial-monitor">
         <SerialMonitor />
       </aside>
     </div>
